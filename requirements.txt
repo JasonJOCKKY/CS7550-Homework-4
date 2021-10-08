@@ -1,1 +1,2 @@
 # List of all the required python packages for this project.
+numpy
