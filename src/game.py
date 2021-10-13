@@ -1,6 +1,17 @@
 import numpy as np
 from numpy.core.fromnumeric import shape
 
+# Represents the directions on the gameboard.
+# tr(1, 1), t(0, 1), br(1, -1), r(1, 0)
+# Remember to also expand in the oposite direction.
+DIRECTIONS = np.array([
+    np.array([1, 1]),
+    np.array([0, 1]),
+    np.array([1, -1]),
+    np.array([1, 0])
+])
+
+
 class GameState:
   """
     A class representing the state of two-player four-in-a-row game.
@@ -10,18 +21,19 @@ class GameState:
       1: Player 1 mark.
       2: Player 2 mark.
   """
+
   def __init__(self, game, player_h):
     """
       Constructor for the class.
       :param game: An 2D array that represents the game board.
       :player_h: Stores player huristic values. 
-                  a-side-open-b-in-a-row is stored in player_h[player][a][b]
+                 "a-side-open-b-in-a-row" is stored in player_h[player][a][b]
     """
     self.__game = game
     self.__player_h = player_h
 
   @classmethod
-  def create_empty(cls, row, col):
+  def CREATE_EMPTY(cls, row, col):
     """
       Construct a new 'GameState' object with empty playing board.
       :param row: Number of rows on the game board.
@@ -31,10 +43,11 @@ class GameState:
     game = np.zeros((row, col), dtype=np.int8)
     player_h = np.zeros((2, 3, 4), dtype=np.int0)
     return cls(game, player_h)
-  
+
   def __getitem__(self, row):
     return self.__game[row]
 
+  # NOT FINISHED YET 
   def next_state(self, player, row, col):
     """
       Generated a new GameState based on the move that a player makes.
@@ -55,23 +68,15 @@ class GameState:
     # “two-side-open-2-in-a-row”: there are empty spaces next to both ends of a 2-
     #   in-a-row to potentially make it 3-in-a row in the next move.
 
-    # check tr(1, 1), t(0, 1), br(1, -1), r(1, 0),
-    directions = np.array([
-      np.array([1, 1]), 
-      np.array([0, 1]),
-      np.array([1, -1]),
-      np.array([1, 0])
-    ])
-
     def __location_within_range(location):
-      return (location[0] in range(self.__game.shape[0]) 
-            and location[1] in range(self.__game.shape[1]))
+      return (location[0] in range(self.__game.shape[0])
+              and location[1] in range(self.__game.shape[1]))
 
-    # for i in range(-1, 2):
-    for [i, j] in directions:
-      d = np.array([i, j])
-      a = 2 # a sides open
-      b = 0 # b in a row
+    # try to find consecutive pieces of player
+    # expand in + and - direction
+    for d in DIRECTIONS:
+      a = 2  # a sides open
+      b = 0  # b in a row
       expand_dir = [-1, 1]
       p = np.array([row, col])
       while b < 4 and a > 0:
@@ -94,7 +99,8 @@ class GameState:
 
     return GameState(new_game, new_player_h)
 
-g = GameState.create_empty(6, 5)
+
+g = GameState.CREATE_EMPTY(6, 5)
 print(g[5][4])
 print(g.__player_h)
-g.next_state(1,2,3)
+g.next_state(1, 2, 3)
