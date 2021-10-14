@@ -2,6 +2,16 @@ import numpy as np
 from numpy.core.fromnumeric import shape
 
 from typing import List
+# Represents the directions on the gameboard.
+# tr(1, 1), t(0, 1), br(1, -1), r(1, 0)
+# Remember to also expand in the oposite direction.
+DIRECTIONS = np.array([
+    np.array([1, 1]),
+    np.array([0, 1]),
+    np.array([1, -1]),
+    np.array([1, 0])
+])
+
 
 class GameState:
   """
@@ -23,7 +33,7 @@ class GameState:
     self.ncol = game_board.shape[1]
 
   @classmethod
-  def create_empty(cls, row, col):
+  def CREATE_EMPTY(cls, row, col):
     """
       Construct a new 'GameState' object with empty playing board.
       :param row: Number of rows on the game board.
@@ -36,6 +46,7 @@ class GameState:
   def __getitem__(self, row):
     return self.__game_board[row]
 
+  # NOT FINISHED YET 
   def next_state(self, player, row, col):
     """
       Generated a new GameState based on the move that a player makes.
@@ -47,17 +58,34 @@ class GameState:
     new_game_board[row][col] = player
     new_player_h = np.copy(self.__player_h)
 
-    # check tr(1, 1), t(0, 1), br(1, -1), r(1, 0),
-    directions = np.array([
-      np.array([1, 1]), 
-      np.array([0, 1]),
-      np.array([1, -1]),
-      np.array([1, 0])
-    ])
-
     def __location_within_range(location):
-      return (location[0] in range(self.__game.shape[0]) 
-            and location[1] in range(self.__game.shape[1]))
+      return (location[0] in range(self.__game_board.shape[0])
+              and location[1] in range(self.__game_board.shape[1]))
+
+    # try to find consecutive pieces of player
+    # expand in + and - direction
+    for d in DIRECTIONS:
+      a = 2  # a sides open
+      b = 0  # b in a row
+      expand_dir = [-1, 1]
+      p = np.array([row, col])
+      while b < 4 and a > 0:
+        for k in expand_dir:
+          current_location = p + d * b * k
+          if not __location_within_range(current_location):
+            a -= 1
+          else:
+            current_value = new_game_board[current_location[0]][current_location[1]]
+            if current_value == player:
+              b += 1
+            else:
+              expand_dir.remove(k)
+              if current_value != 0:
+                a -= 1
+      if b == 4:
+        return "win"
+      if b > 1:
+        new_player_h[player][a][b] += 1
 
     return GameState(new_game_board, new_player_h)
 
@@ -246,7 +274,10 @@ class GameState:
 
 
 def main():
-  g = GameState.create_empty(6, 5)
+  g = GameState.CREATE_EMPTY(6, 5)
+  print(g[5][4])
+  # print(g.__player_h)
+  g.next_state(1, 2, 3)
 
 
 if __name__ == "__main__":
