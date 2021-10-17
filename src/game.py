@@ -45,7 +45,7 @@ class GameState:
       for col_v in row_v:
         if (col_v != 0):
           return False
-    
+
     return True
 
   def next_state(self, player, row, col):
@@ -214,32 +214,5 @@ class GameState:
     # check drawn
     if np.count_nonzero(self.__game_board) == nrow*ncol:
       return 0
-
-    return None
-
-  def eval_function(self, depth: int, player_id: int):
-    """get the value of unity value or heuristic value.
-
-    The function return `None` if state is not in leave nodes.
-    If the state is terminal nodes, return the unity value (-1, 0, 1).
-    If the state is non-terminal nodes, return heuristic value.
-
-    Args:
-        depth (int): depth of tree.
-        player_id (int): id of player.
-
-    Returns:
-        int: value calculated by evaluation function. `None` if the state is not
-        a leave nodes.
-    """
-
-    # For terminal nodes, return their utility value: -1, 0, or 1.
-    value = self.terminal_eval_function()
-    if value is not None:
-      return value
-
-    # TODO(Jingsong/Jiuyi): modify the constant 4 to be a variable.
-    if depth >= 4:
-      return self.heuristic_eval_function(player_id)
 
     return None

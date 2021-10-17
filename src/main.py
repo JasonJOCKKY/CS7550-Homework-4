@@ -7,6 +7,7 @@ COL = 5
 g = GameState.CREATE_EMPTY(ROW, COL)
 player_id = 1
 
+print("Empty Game Board Created")
 print(g)
 
 term_value = g.terminal_eval_function()

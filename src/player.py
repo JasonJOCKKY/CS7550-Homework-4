@@ -34,7 +34,7 @@ def find_next_move(game_state: GameState, player_id: int, max_depth: int) -> tup
           value = new_value
           result = new_move
 
-  print(f'num_called = {log_num_called}, time = {time.time() - log_time}')
+  print(f'nodes_generated = {log_num_called}, time = {time.time() - log_time}')
   return result
 
 
